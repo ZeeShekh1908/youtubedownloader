@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>YouTube Downloader</title>
+  <style>
+    body{
+      margin: 0;
+      padding: 0;
+      background-color: rgb(226, 58, 89);
+    }
+    h1{
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      color: rgb(235, 228, 228);
+      text-align: center;
+    }
+    #downloadForm{
+      margin: 5rem 8rem;
+      font-size: 1.5rem;
+      line-height: 5rem;
+      font-family: Arial, Helvetica, sans-serif;
+      color: rgb(10, 10, 12);
+    }
+    #url{
+      padding: 1rem 1rem;
+      border-radius: 8px;
+    }
+    button{
+      padding: 1rem;
+      cursor: pointer;
+      border-radius: 1rem;
+      color: rgb(5, 138, 93);
+      font-style: oblique;
+      font-weight: bold;
+      background-color: aquamarine;
+    }
+  </style>
+</head>
+<body>
+  <h1>YouTube Video Downloader</h1>
+  <form id="downloadForm">
+    <label for="url">YouTube URL:<br></label>
+    <input type="text" id="url" name="url" required><br>
+    <button type="submit">Download</button>
+  </form>
+
+  <script>
+    document.getElementById('downloadForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+      const url = document.getElementById('url').value;
+      
+      const response = await fetch('/download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url })
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'video.mp4';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        alert('Failed to download video');
+      }
+    });
+  </script>
+</body>
+</html>
